@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -40,15 +42,18 @@ public class WebDownloader {
 	 * output directroy to store it
 	 * 
 	 * @param baseURL
+	 *            Base URL for the files
 	 * @param fileName
+	 *            file name
 	 * @param outputDir
+	 *            Directory in which the file needs to be downloaded
 	 */
 	public WebDownloader(String baseURL, String fileName, String outputDir) {
 		this.sourceURL = baseURL + "/" + fileName;
 		this.outputFilePath = outputDir + File.separator + fileName;
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Initialized the URLDownloader for " + fileName);
+			logger.debug("Initialized the WebDownloader for " + fileName);
 		}
 	}
 
@@ -58,7 +63,11 @@ public class WebDownloader {
 	 * process
 	 * 
 	 * @throws IOException
+	 *             Throws when the content are not able to download or not able
+	 *             to write to the output file
 	 * @throws InterruptedException
+	 *             Throws this exception when there is an interruption while the
+	 *             main tread sleeps.
 	 */
 	public void start() throws IOException, InterruptedException {
 		File outputFile = new File(outputFilePath);
@@ -85,7 +94,8 @@ public class WebDownloader {
 				downloadToFile(outputFile);
 				isDownloaded = true;
 				break;
-			} catch (UnknownHostException e) {
+			} catch (UnknownHostException | SocketTimeoutException
+					| SocketException e) {
 				/*
 				 * Ignoring this exception. The cause here could be network
 				 * failure. So, if this error occurs, the program should not
@@ -115,18 +125,24 @@ public class WebDownloader {
 	 * Downloads the content from sourceURL and saves it to local file
 	 * 
 	 * @param outputFile
-	 * @return
+	 *            The File object of output file
 	 * @throws UnknownHostException
+	 * @throws SocketTimeoutException
+	 * @throws SocketException
+	 *             The above three errors could be thrown when there is a
+	 *             network failure.
 	 * @throws IOException
+	 *             This error could be thrown when there is an issue in writing
+	 *             the content or some other issue which is caused by network
 	 */
 	private void downloadToFile(File outputFile) throws UnknownHostException,
-			IOException {
+			SocketTimeoutException, SocketException, IOException {
 
 		FileOutputStream output = null;
 		try {
 			URL url = new URL(sourceURL);
 			URLConnection con = url.openConnection();
-
+			con.setReadTimeout(Constants.READ_TIMEOUT);
 			InputStream input = con.getInputStream();
 			output = new FileOutputStream(outputFile);
 			if (logger.isInfoEnabled()) {
@@ -142,7 +158,8 @@ public class WebDownloader {
 			if (logger.isInfoEnabled()) {
 				logger.info("Completed download " + outputFilePath);
 			}
-		} catch (UnknownHostException e) {
+		} catch (UnknownHostException | SocketTimeoutException
+				| SocketException e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Error occured while downloading content "
 						+ e.getMessage());

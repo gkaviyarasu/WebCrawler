@@ -73,7 +73,7 @@ public class MBoxDownloader {
 	 * needs to be downloaded.
 	 * 
 	 * @throws IOException
-	 *             , InterruptedException
+	 * @throws InterruptedException
 	 */
 	public void startDownload() throws IOException, InterruptedException {
 

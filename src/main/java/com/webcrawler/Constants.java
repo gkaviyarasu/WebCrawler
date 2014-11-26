@@ -6,4 +6,5 @@ public class Constants {
 	public static final String BASE_DIR = "MBoxArchive";
 	public static final int MAX_RETRY = 10;
 	public static final int RETRY_GAP = 3000;
+	public static final int READ_TIMEOUT = 10000;
 }
