@@ -71,16 +71,7 @@ public class WebDownloader {
 	 */
 	public void start() throws IOException, InterruptedException {
 		File outputFile = new File(outputFilePath);
-		if (outputFile.exists()) {
-			if (!outputFile.isFile()) {
-				logger.error("The destination is not a file " + outputFilePath);
-				throw new IOException("Unknown target");
-			}
-
-			if (logger.isInfoEnabled()) {
-				logger.info("File already present, skiping download "
-						+ outputFilePath);
-			}
+		if (isFileAlreadyDownloaded(outputFile)) {
 			return;
 		}
 		int retryCount;
@@ -101,6 +92,10 @@ public class WebDownloader {
 				 * failure. So, if this error occurs, the program should not
 				 * abort, instead it should retry the download
 				 */
+				if (logger.isErrorEnabled()) {
+					logger.error("Error occured while downloading content "
+							+ e.getMessage());
+				}
 
 			} finally {
 				if (!isDownloaded) {
@@ -119,6 +114,33 @@ public class WebDownloader {
 					"Couldn't Download the content. "
 							+ "Please check the connection or check whether the URL is correct");
 		}
+	}
+
+	/**
+	 * Checks whether the file is already present or not.
+	 * 
+	 * @param outputFile
+	 *            File that needs to be checked
+	 * @return boolean 
+	 * 			  true - If the file already downloaded 
+	 * 			  false - If the file is not present at all.
+	 * @throws IOException
+	 *             In case if the input is not a file.
+	 */
+	private boolean isFileAlreadyDownloaded(File outputFile) throws IOException {
+		if (outputFile.exists()) {
+			if (!outputFile.isFile()) {
+				logger.error("The destination is not a file " + outputFilePath);
+				throw new IOException("Unknown target");
+			}
+
+			if (logger.isInfoEnabled()) {
+				logger.info("File already present, skiping download "
+						+ outputFilePath);
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -158,13 +180,6 @@ public class WebDownloader {
 			if (logger.isInfoEnabled()) {
 				logger.info("Completed download " + outputFilePath);
 			}
-		} catch (UnknownHostException | SocketTimeoutException
-				| SocketException e) {
-			if (logger.isErrorEnabled()) {
-				logger.error("Error occured while downloading content "
-						+ e.getMessage());
-			}
-			throw e;
 		} catch (IOException e) {
 			if (logger.isErrorEnabled()) {
 				logger.error("Error occured while downloading content "
@@ -177,5 +192,4 @@ public class WebDownloader {
 			}
 		}
 	}
-
 }

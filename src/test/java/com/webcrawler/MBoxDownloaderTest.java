@@ -1,3 +1,4 @@
+package com.webcrawler;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
