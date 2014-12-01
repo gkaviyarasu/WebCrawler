@@ -43,10 +43,10 @@ public class MBoxDownloader {
 	 */
 	public MBoxDownloader() {
 		this(Calendar.getInstance().get(Calendar.YEAR));
-		if (logger.isInfoEnabled()) {
-			logger.info("The year for archive is not provided. Assuming the current year "
-					+ Calendar.getInstance().get(Calendar.YEAR));
-		}
+		logger.info(
+				"The year for archive is not provided. Assuming the current year {}",
+				Calendar.getInstance().get(Calendar.YEAR));
+
 	}
 
 	/**
@@ -77,9 +77,7 @@ public class MBoxDownloader {
 	 */
 	public void startDownload() throws IOException, InterruptedException {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Initializing download");
-		}
+		logger.debug("Initializing download");
 		DirectoryHelper.createDirectory(outputDir);
 		List<String> archives = MavenArchiveHelper.getAvailableArchives(year);
 		for (String archive : archives) {

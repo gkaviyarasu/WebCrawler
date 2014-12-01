@@ -52,9 +52,7 @@ public class WebDownloader {
 		this.sourceURL = baseURL + "/" + fileName;
 		this.outputFilePath = outputDir + File.separator + fileName;
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Initialized the WebDownloader for " + fileName);
-		}
+		logger.debug("Initialized the WebDownloader for {}", fileName);
 	}
 
 	/**
@@ -76,10 +74,8 @@ public class WebDownloader {
 		}
 		int retryCount;
 		for (retryCount = 1; retryCount <= Constants.MAX_RETRY; retryCount++) {
-			if (logger.isInfoEnabled()) {
-				logger.info(retryCount + " try to download the archive "
-						+ sourceURL);
-			}
+			logger.info("{} try to download the archive {}", retryCount,
+					sourceURL);
 			boolean isDownloaded = false;
 			try {
 				downloadToFile(outputFile);
@@ -92,11 +88,8 @@ public class WebDownloader {
 				 * failure. So, if this error occurs, the program should not
 				 * abort, instead it should retry the download
 				 */
-				if (logger.isErrorEnabled()) {
-					logger.error("Error occured while downloading content "
-							+ e.getMessage());
-				}
-
+				logger.error("Error occured while downloading content {}",
+						e.getMessage());
 			} finally {
 				if (!isDownloaded) {
 					// Deleting the output file if it is not fully downloaded.
@@ -107,9 +100,7 @@ public class WebDownloader {
 			Thread.sleep(Constants.RETRY_GAP);
 		}
 		if (retryCount > Constants.MAX_RETRY) {
-			if (logger.isErrorEnabled()) {
-				logger.error("Couldn't download the content from " + sourceURL);
-			}
+			logger.error("Couldn't download the content from {}", sourceURL);
 			throw new IOException(
 					"Couldn't Download the content. "
 							+ "Please check the connection or check whether the URL is correct");
@@ -130,14 +121,12 @@ public class WebDownloader {
 	private boolean isFileAlreadyDownloaded(File outputFile) throws IOException {
 		if (outputFile.exists()) {
 			if (!outputFile.isFile()) {
-				logger.error("The destination is not a file " + outputFilePath);
+				logger.error("The destination is not a file {}", outputFilePath);
 				throw new IOException("Unknown target");
 			}
 
-			if (logger.isInfoEnabled()) {
-				logger.info("File already present, skiping download "
-						+ outputFilePath);
-			}
+			logger.info("File already present, skiping download {}",
+					outputFilePath);
 			return true;
 		}
 		return false;
@@ -167,9 +156,9 @@ public class WebDownloader {
 			con.setReadTimeout(Constants.READ_TIMEOUT);
 			InputStream input = con.getInputStream();
 			output = new FileOutputStream(outputFile);
-			if (logger.isInfoEnabled()) {
-				logger.info("Starting download " + outputFilePath);
-			}
+
+			logger.info("Starting download {}", outputFilePath);
+
 			byte[] buffer = new byte[Constants.BUFFER_SIZE];
 			int bytesRead = -1;
 			while ((bytesRead = input.read(buffer)) != -1) {
@@ -177,14 +166,11 @@ public class WebDownloader {
 			}
 
 			input.close();
-			if (logger.isInfoEnabled()) {
-				logger.info("Completed download " + outputFilePath);
-			}
+			logger.info("Completed download {}", outputFilePath);
+
 		} catch (IOException e) {
-			if (logger.isErrorEnabled()) {
-				logger.error("Error occured while downloading content "
-						+ e.getMessage());
-			}
+			logger.error("Error occured while downloading content {}",
+					e.getMessage());
 			throw e;
 		} finally {
 			if (output != null) {
