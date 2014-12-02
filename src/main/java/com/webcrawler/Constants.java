@@ -32,12 +32,12 @@ public class Constants {
 	public static final int READ_TIMEOUT = 10000;
 
 	/**
-	 * The regular expression that needs to be used to find the archive list for Maven site.
+	 * The regular expression that needs to be used to find the archive list for MAVEN site.
 	 */
 	public static final String ARCHIVE_LIST_REGEX = "(..)\\.mbox/thread";
 	
 	/**
-	 * 
+	 * File on which the Java objects are serialized.
 	 */
 	public static final String SERIALIZABLE_FILE=".jobjects";
 }

@@ -125,7 +125,7 @@ public class WebDownloader {
 	 *             This error could be thrown when there is an issue in writing
 	 *             the content or some other issue which is caused by network
 	 */
-	public void download() throws UnknownHostException, SocketTimeoutException,
+	private void download() throws UnknownHostException, SocketTimeoutException,
 			SocketException, IOException {
 
 		try {

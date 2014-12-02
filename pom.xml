@@ -32,7 +32,7 @@
 					<archive>
 						<manifestEntries>
 							<mode>development</mode>
-							<Main-Class>com.webcrawler.MBoxDownloader</Main-Class>
+							<Main-Class>com.webcrawler.MultiFileDownloader</Main-Class>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -44,7 +44,7 @@
 				<configuration>
 					<programs>
 						<program>
-							<mainClass>com.webcrawler.MBoxDownloader</mainClass>
+							<mainClass>com.webcrawler.MultiFileDownloader</mainClass>
 							<id>webcrawler</id>
 						</program>
 					</programs>
@@ -81,7 +81,7 @@
 						<version>2.18</version>
 					</dependency>
 				</dependencies>
-			</plugin>
+			</plugin> 
 		</plugins>
 	</build>
 	<dependencies>
@@ -101,5 +101,11 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.8.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.surefire</groupId>
+			<artifactId>surefire-junit47</artifactId>
+			<version>2.18</version>
+			<scope>test</scope>
+ 		</dependency>
 	</dependencies>
 </project>

@@ -49,6 +49,16 @@ public class DirectoryHelperTest {
 		DirectoryHelper.createDirectory(TEST_FILEPATH);
 	}
 
+	@Test
+	public void testIsFileAlreadyExist() throws IOException {
+		assertEquals(DirectoryHelper.isFileAlreadyExist(new File(TEST_FILEPATH)),true);
+	}
+	
+	@Test(expected = IOException.class)
+	public void testIsFileAlreadyExistWithDirectory() throws IOException {
+		DirectoryHelper.isFileAlreadyExist(new File(TEST_DIRECTORY2));
+	}
+
 	@AfterClass
 	public static void tearDown() throws Throwable {
 		deleteFile(new File(TEST_DIRECTORY1));

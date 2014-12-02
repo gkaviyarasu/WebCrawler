@@ -50,4 +50,24 @@ public class DirectoryHelper {
 		}
 		return false;
 	}
+
+	/**
+	 * Deletes a folder and all the files in it or only the specified file.
+	 * 
+	 * @param file
+	 *            File object of a file or directory that needs to be deleted.
+	 */
+	public static void deleteDirectory(File file) {
+		if (file.exists()) {
+			if (file.isFile()) {
+				file.delete();
+			} else if (file.isDirectory()) {
+				File[] subFiles = file.listFiles();
+				for (File subFile : subFiles) {
+					deleteDirectory(subFile);
+				}
+				file.delete();
+			}
+		}
+	}
 }

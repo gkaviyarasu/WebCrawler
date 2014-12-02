@@ -17,11 +17,12 @@ import com.webcrawler.web.WebDownloader;
 import com.webcrawler.writer.FileStreamWriter;
 
 /**
- * MBOX Downloader.
+ * Multiple File Downloader.
  * 
- * This is the main class which will be invoked when executing as the jar. This
- * class finds the archive that are need to be downloaded and sets the download
- * path, and starts the download one by one.
+ * This class downloads multiple files from a single Internet source and saves
+ * them in FileSystem.
+ * 
+ * It uses WebDownloader class to download each file.
  * 
  */
 public class MultiFileDownloader implements Serializable {
@@ -46,31 +47,31 @@ public class MultiFileDownloader implements Serializable {
 	 * Holds the ArchiveManager object which provides the list of archives that
 	 * need to be dowloaded.
 	 */
-	private URIProvider archiveManager;
+	private URIProvider uriProvider;
 
 	/**
-	 * The list of archive files' name that need to be downloaded.
+	 * The list of files' name that need to be downloaded.
 	 */
-	private List<String> archives;
+	private List<String> files;
 
 	/**
-	 * The index for archive list where the download is beeing progressed.
+	 * The index to locate in the file name list where the download is being progressed.
 	 */
 	private int index = 0;
 
 	/**
 	 * Constructor, used to initialize the class with the output directory and
-	 * the ArchiveManager.
+	 * the URIProvider.
 	 * 
-	 * @param archiveManager
+	 * @param URIProvider
 	 *            - The ArchiveManager specific to the Site which provides the
 	 *            list of archives to be downloaded.
 	 * @param outputDir
 	 *            - Output directory in which the downloaded files need to be
 	 *            stored.
 	 */
-	public MultiFileDownloader(URIProvider archiveManager, String outputDir) {
-		this.archiveManager = archiveManager;
+	public MultiFileDownloader(URIProvider uriProvider, String outputDir) {
+		this.uriProvider = uriProvider;
 		this.outputDir = outputDir;
 
 		logger.debug("Initialized the MBOXDownloader");
@@ -89,20 +90,20 @@ public class MultiFileDownloader implements Serializable {
 
 		logger.debug("Initializing download");
 		DirectoryHelper.createDirectory(outputDir);
-		if (archives == null) {
-			archives = archiveManager.getAvailableFiles();
+		if (files == null) {
+			files = uriProvider.getAvailableFiles();
 		}
-		for (; index < archives.size(); index++) {
+		for (; index < files.size(); index++) {
 			File outputFile = new File(outputDir + File.separator
-					+ archives.get(index));
+					+ files.get(index));
 			if (DirectoryHelper.isFileAlreadyExist(outputFile)) {
 				logger.info("Output file already present at {}. Deleting it.",
 						outputFile.getPath());
 				outputFile.delete();
 			}
-			logger.debug("Procesing Archive {}", archives.get(index));
+			logger.debug("Procesing Archive {}", files.get(index));
 			WebDownloader downloader = new WebDownloader(
-					archiveManager.getWebURL(archives.get(index)),
+					uriProvider.getWebURL(files.get(index)),
 					new FileStreamWriter(outputFile));
 			downloader.process();
 		}
@@ -110,7 +111,7 @@ public class MultiFileDownloader implements Serializable {
 
 	/**
 	 * The main function which will be called while executing the jar file. This
-	 * main function will store the MBoxDownloader object incase of exception
+	 * main function will store/persist the MultiFileDownloader object incase of exception
 	 * and to resume the download again.
 	 * 
 	 * @param args
@@ -136,7 +137,8 @@ public class MultiFileDownloader implements Serializable {
 
 		int year = args.length > 0 ? Integer.parseInt(args[0]) : Calendar
 				.getInstance().get(Calendar.YEAR);
-		String outputDir = args.length == 2 ? args[1] : Constants.DEFAULT_BASE_DIR;
+		String outputDir = args.length == 2 ? args[1]
+				: Constants.DEFAULT_BASE_DIR;
 		outputDir += File.separator + year;
 		File file = new File(outputDir + File.separator
 				+ Constants.SERIALIZABLE_FILE);
@@ -145,11 +147,13 @@ public class MultiFileDownloader implements Serializable {
 		if (DirectoryHelper.isFileAlreadyExist(file)) {
 			logger.info("It seems, the data has been downloaded partially. "
 					+ "This program is going to resusme the download process");
-			downloader = (MultiFileDownloader) ObjectSerializer.readObject(file);
+			downloader = (MultiFileDownloader) ObjectSerializer
+					.readObject(file);
 			logger.info("Resuming the download process");
 		} else {
-			downloader = new MultiFileDownloader(URIProviderFactory.getInstance(
-					Constants.BASE_URL, year), outputDir);
+			downloader = new MultiFileDownloader(
+					URIProviderFactory.getInstance(Constants.BASE_URL, year),
+					outputDir);
 		}
 		try {
 			downloader.startDownload();
