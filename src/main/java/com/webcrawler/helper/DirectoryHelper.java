@@ -30,4 +30,24 @@ public class DirectoryHelper {
 			}
 		}
 	}
+
+	/**
+	 * Checks whether the file is already present or not.
+	 * 
+	 * @param file
+	 *            File that needs to be checked
+	 * @return boolean true - If the file already present. false - If the file
+	 *         is not present at all.
+	 * @throws IOException
+	 *             In case if the input is not a file.
+	 */
+	public static boolean isFileAlreadyExist(File file) throws IOException {
+		if (file.exists()) {
+			if (!file.isFile()) {
+				throw new IOException("Unknown File URI");
+			}
+			return true;
+		}
+		return false;
+	}
 }
