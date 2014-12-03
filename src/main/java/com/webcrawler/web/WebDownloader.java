@@ -76,7 +76,7 @@ public class WebDownloader {
 
 		int retryCount = 1;
 		for (; retryCount <= Constants.MAX_RETRY; retryCount++) {
-			logger.debug("{}/{} try to download the archive {}", retryCount,
+			logger.info("{}/{} try to download the archive {}", retryCount,
 					Constants.MAX_RETRY, sourceURL);
 			boolean isDownloaded = false;
 			try {
@@ -134,7 +134,7 @@ public class WebDownloader {
 			con.setReadTimeout(Constants.READ_TIMEOUT);
 			InputStream input = con.getInputStream();
 
-			logger.debug("Starting download.");
+			logger.info("Starting download.");
 
 			byte[] buffer = new byte[Constants.BUFFER_SIZE];
 			int bytesRead = -1;
@@ -143,7 +143,7 @@ public class WebDownloader {
 			}
 			output.flush();
 			input.close();
-			logger.debug("Completed download.");
+			logger.info("Completed download.");
 
 		} catch (IOException e) {
 			logger.error("Error occured while downloading content {}",
